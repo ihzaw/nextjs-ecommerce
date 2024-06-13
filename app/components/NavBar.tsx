@@ -4,11 +4,10 @@ import LoginForm from "./LoginForm";
 interface NavBarProps {}
 
 const NavBar = (props) => {
-
   return (
     <div className="navbar bg-base-100 p-8">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">Ecom</a>
+        <a className="btn btn-ghost text-xl">Hasui Kawase's Prints</a>
       </div>
       <div className="flex-none">
         <ul className="menu menu-horizontal px-1">
