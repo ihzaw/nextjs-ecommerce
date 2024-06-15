@@ -12,7 +12,9 @@ const LoginForm = () => {
   const [isLoadingLogin, setIsLoadingLogin] = useState<boolean>(false);
   const [isErrorLogin, setIsErrorLogin] = useState<boolean>(false);
 
-  const isLoggedIn = localStorage.getItem("access_token");
+  const isLoggedIn = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") ?? "")
+    : null;
 
   const [isLoadingLogout, setIsLoadingLogout] = useState<boolean>(false);
   const [isErrorLogout, setIsErrorLogout] = useState<boolean>(false);
@@ -38,6 +40,7 @@ const LoginForm = () => {
 
   const handleLogin = () => {
     setIsLoadingLogin(true);
+    setIsErrorLogin(false)
     fetch(loginApi, {
       method: "POST",
       headers: {
@@ -54,8 +57,7 @@ const LoginForm = () => {
           return;
         }
         const data: LoginResponseInterface = await response.json();
-        localStorage.setItem("access_token", data.access);
-        localStorage.setItem("refresh_token", data.refresh);
+        localStorage.setItem("user", JSON.stringify(data));
         setLoginForm(defaultLoginForm);
       })
       .catch((e) => {
@@ -68,42 +70,47 @@ const LoginForm = () => {
 
   const handleLogout = () => {
     setIsLoadingLogout(true);
-    const refreshToken = localStorage.getItem("refresh_token");
-    const accessToken = localStorage.getItem("access_token");
-    fetch(logoutApi, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        refresh: refreshToken,
-      }),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          setIsErrorLogin(true);
-          return;
-        }
+    setIsErrorLogout(false)
+    const user: UserInterface | null = JSON.parse(
+      localStorage.getItem("user") ?? ""
+    );
 
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+    if (user) {
+      fetch(logoutApi, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access}`,
+        },
+        body: JSON.stringify({
+          refresh: user.refresh,
+        }),
       })
-      .catch((e) => {
-        setIsErrorLogout(true);
-      })
-      .finally(() => {
-        setIsLoadingLogout(false);
-      });
+        .then(async (response) => {
+          if (!response.ok) {
+            setIsErrorLogout(true);
+            return;
+          }
+
+          localStorage.removeItem("user");
+        })
+        .catch((e) => {
+          setIsErrorLogout(true);
+        })
+        .finally(() => {
+          setIsLoadingLogout(false);
+        });
+    }
   };
 
   const handleRegister = () => {
-    setIsErrorRegister(true);
+    setIsLoadingRegister(true);
+    setIsErrorRegister(false)
     const payload = {
       email_address: loginForm.email,
       full_name: loginForm.fullName,
-      password: loginForm.password
-    }
+      password: loginForm.password,
+    };
     fetch(registerApi, {
       method: "POST",
       headers: {
@@ -117,7 +124,7 @@ const LoginForm = () => {
           return;
         }
 
-        setFormMode('login')
+        setFormMode("login");
       })
       .catch((e) => {
         setIsErrorRegister(true);
@@ -174,18 +181,20 @@ const LoginForm = () => {
                 />
               </label>
             </li>
+            {(isErrorLogin || isErrorRegister || isErrorLogout) && (
+              <div className="flex justify-end mb-5 w-full">
+                <p className="text-red-500 text-right text-wrap">
+                  Something went wrong, <br /> Please try again
+                </p>
+              </div>
+            )}
             <li className="mb-5">
-              {isErrorLogin || isErrorRegister || isErrorLogout && (
-                <div className="flex justify-end">
-                  <p className="text-red-500">Something went wrong</p>
-                </div>
-              )}
               <button
                 disabled={
                   !loginForm.email || !loginForm.password || isLoadingLogin
                 }
                 className="btn btn-outline"
-                onClick={formMode === "login"  ? handleLogin : handleRegister}
+                onClick={formMode === "login" ? handleLogin : handleRegister}
                 type="submit"
               >
                 {isLoadingLogin ? (
@@ -214,14 +223,22 @@ const LoginForm = () => {
         )}
 
         {isLoggedIn && (
-          <button
-            disabled={isLoadingLogout}
-            className="btn btn-outline"
-            onClick={handleLogout}
-            type="button"
-          >
-            {isLoadingLogout ? <Loader className="animate-spin" /> : "Logout"}
-          </button>
+          <>
+            <div className="text-right mb-5">
+              <p>
+                You're logged in,{" "}
+                {JSON.parse(localStorage.getItem("user") ?? "").full_name}
+              </p>
+            </div>
+            <button
+              disabled={isLoadingLogout}
+              className="btn btn-outline w-full"
+              onClick={handleLogout}
+              type="button"
+            >
+              {isLoadingLogout ? <Loader className="animate-spin" /> : "Logout"}
+            </button>
+          </>
         )}
       </form>
     </ul>

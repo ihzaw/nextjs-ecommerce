@@ -3,7 +3,7 @@ import LoginForm from "./LoginForm";
 
 interface NavBarProps {}
 
-const NavBar = (props) => {
+const NavBar = () => {
   return (
     <div className="navbar bg-base-100 p-8">
       <div className="flex-1">

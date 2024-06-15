@@ -17,7 +17,11 @@ interface ProductInterface {
 }
 
 interface LoginResponseInterface {
+  id: string;
   email: string;
   refresh: string;
   access: string;
+}
+
+interface UserInterface extends LoginResponseInterface {
 }
