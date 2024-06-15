@@ -1,12 +1,10 @@
+import { getItemsApi } from "./api";
 import ItemCard from "./components/ItemCard";
 
 async function getData() {
-  const res = await fetch("http://127.0.0.1:8000/api/products/?format=json");
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
+  const res = await fetch(getItemsApi);
 
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
 
@@ -23,7 +21,7 @@ export default async function Home() {
         <div className="col-span-4 grid grid-cols-3 gap-9">
           {items.map((item) => {
             return (
-              <div className="flex justify-center">
+              <div className="flex justify-center" key={item.id}>
                 <ItemCard
                   imageUrl={item.picture_url}
                   alt={item.name}

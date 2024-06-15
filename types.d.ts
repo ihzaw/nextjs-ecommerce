@@ -15,3 +15,9 @@ interface ProductInterface {
     price: string,
     created_at: string
 }
+
+interface LoginResponseInterface {
+  email: string;
+  refresh: string;
+  access: string;
+}
