@@ -1,6 +1,9 @@
-"use client";
+"use client"
 
+import { useContext, useEffect, useState } from "react";
+import useLocalStorageListener from "../hooks/useLocalStorageListener";
 import ModalPreview from "./ModalPreview";
+import { LoginContext } from "../providers/LoginProvider";
 
 interface ItemCardProps {
   imageUrl: string;
@@ -25,6 +28,8 @@ const ItemCard = (props: ItemCardProps) => {
     fullDescription,
   } = props;
 
+  const { isLoggedIn } = useContext(LoginContext)
+  
   const openModal = () => {
     const modal = document.getElementById(
       `modal_${title.trim()}`
@@ -63,6 +68,7 @@ const ItemCard = (props: ItemCardProps) => {
         description={description}
         price={price}
         fullDescription={fullDescription}
+        isLoggedIn={isLoggedIn}
       />
     </>
   );

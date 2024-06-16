@@ -6,10 +6,31 @@ interface ModalPreviewProps {
   description: string;
   fullDescription: string;
   price: string;
+  isLoggedIn: boolean
 }
 
 const ModalPreview = (props: ModalPreviewProps) => {
-  const { id, title, imageUrl, alt, description, price, fullDescription } = props;
+  const { id, title, imageUrl, alt, description, price, fullDescription, isLoggedIn } =
+    props;
+
+  const CheckoutButton = () => {
+    return (
+      <div className="flex justify-end">
+        {isLoggedIn ? (
+          <button className="btn btn-primary">Checkout</button>
+        ) : (
+          <div
+            className="tooltip tooltip-left z-50"
+            data-tip="You must log in before you can make a purchase"
+          >
+            <button className="btn btn-primary" disabled={!isLoggedIn}>
+              Checkout
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <dialog id={id} className="modal">
@@ -39,9 +60,7 @@ const ModalPreview = (props: ModalPreviewProps) => {
                     .format(Number(price))
                     .replace(/,00$/, "")}
                 </p>
-                <div className="flex justify-end">
-                  <button className="btn btn-primary">Checkout</button>
-                </div>
+                <CheckoutButton />
               </div>
             </div>
           </div>

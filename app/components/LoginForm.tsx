@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Key, Loader, Mail, User } from "react-feather";
 import { loginApi, logoutApi, registerApi } from "../api";
 import { defaultLoginForm } from "../constants";
+import { LoginContext } from "../providers/LoginProvider";
 
 const LoginForm = () => {
+  const { setIsLoggedIn} = useContext(LoginContext)
   const [formMode, setFormMode] = useState<LoginFormMode>("login");
   const [loginForm, setLoginForm] =
     useState<LoginFormInterface>(defaultLoginForm);
@@ -58,6 +60,7 @@ const LoginForm = () => {
         }
         const data: LoginResponseInterface = await response.json();
         localStorage.setItem("user", JSON.stringify(data));
+        setIsLoggedIn(true)
         setLoginForm(defaultLoginForm);
       })
       .catch((e) => {
@@ -93,6 +96,7 @@ const LoginForm = () => {
           }
 
           localStorage.removeItem("user");
+          setIsLoggedIn(false)
         })
         .catch((e) => {
           setIsErrorLogout(true);
@@ -197,7 +201,7 @@ const LoginForm = () => {
                 onClick={formMode === "login" ? handleLogin : handleRegister}
                 type="submit"
               >
-                {isLoadingLogin ? (
+                {isLoadingLogin || isLoadingRegister ? (
                   <Loader className="animate-spin" />
                 ) : (
                   <>{formMode === "login" ? "Login" : "Register"}</>

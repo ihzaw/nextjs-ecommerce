@@ -1,4 +1,3 @@
-import { Key, Mail } from "react-feather";
 import LoginForm from "./LoginForm";
 
 interface NavBarProps {}
