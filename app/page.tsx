@@ -18,7 +18,7 @@ export default async function Home() {
     <main>
       <div className="grid grid-cols-5">
         <div className="">filter disini</div>
-        <div className="col-span-4 grid grid-cols-3 gap-9">
+        <div className="col-span-4 grid grid-cols-3 gap-9 px-10">
           {items.map((item) => {
             return (
               <div className="flex justify-center" key={item.id}>
@@ -31,6 +31,7 @@ export default async function Home() {
                   title={item.name}
                   key={item.name}
                   price={item.price}
+                  id={item.id.toString()}
                 />
               </div>
             );

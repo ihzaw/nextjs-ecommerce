@@ -1,6 +1,5 @@
+import { Bounce, ToastContainer } from "react-toastify";
 import LoginForm from "./LoginForm";
-
-interface NavBarProps {}
 
 const NavBar = () => {
   return (

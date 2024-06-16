@@ -14,6 +14,7 @@ interface ItemCardProps {
   buttonText: string;
   price: string;
   fullDescription: string;
+  id: string;
 }
 
 const ItemCard = (props: ItemCardProps) => {
@@ -26,18 +27,17 @@ const ItemCard = (props: ItemCardProps) => {
     buttonText,
     price,
     fullDescription,
+    id
   } = props;
 
   const { isLoggedIn } = useContext(LoginContext)
   
   const openModal = () => {
     const modal = document.getElementById(
-      `modal_${title.trim()}`
+      `modal_${id}`
     ) as HTMLDialogElement;
     if (modal) {
       modal.showModal();
-    } else {
-      console.error("Dialog element not found");
     }
   };
 
@@ -61,7 +61,7 @@ const ItemCard = (props: ItemCardProps) => {
         </div>
       </div>
       <ModalPreview
-        id={`modal_${title.trim()}`}
+        id={`modal_${id}`}
         title={title}
         imageUrl={imageUrl}
         alt={alt}
@@ -69,6 +69,7 @@ const ItemCard = (props: ItemCardProps) => {
         price={price}
         fullDescription={fullDescription}
         isLoggedIn={isLoggedIn}
+        itemId={id}
       />
     </>
   );

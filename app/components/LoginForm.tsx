@@ -7,16 +7,12 @@ import { defaultLoginForm } from "../constants";
 import { LoginContext } from "../providers/LoginProvider";
 
 const LoginForm = () => {
-  const { setIsLoggedIn} = useContext(LoginContext)
+  const { isLoggedIn, setIsLoggedIn, notify} = useContext(LoginContext)
   const [formMode, setFormMode] = useState<LoginFormMode>("login");
   const [loginForm, setLoginForm] =
     useState<LoginFormInterface>(defaultLoginForm);
   const [isLoadingLogin, setIsLoadingLogin] = useState<boolean>(false);
   const [isErrorLogin, setIsErrorLogin] = useState<boolean>(false);
-
-  const isLoggedIn = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") ?? "")
-    : null;
 
   const [isLoadingLogout, setIsLoadingLogout] = useState<boolean>(false);
   const [isErrorLogout, setIsErrorLogout] = useState<boolean>(false);
@@ -62,6 +58,7 @@ const LoginForm = () => {
         localStorage.setItem("user", JSON.stringify(data));
         setIsLoggedIn(true)
         setLoginForm(defaultLoginForm);
+        notify('Success Login !')
       })
       .catch((e) => {
         setIsErrorLogin(true);
