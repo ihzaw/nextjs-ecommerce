@@ -25,3 +25,11 @@ interface LoginResponseInterface {
 
 interface UserInterface extends LoginResponseInterface {
 }
+
+interface OrderHistory {
+    "id": number;
+    "product": ProductInterface;
+    "payment_method": string;
+    "total": string;
+    "created_at": string;
+}

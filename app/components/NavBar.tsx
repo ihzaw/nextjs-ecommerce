@@ -1,16 +1,17 @@
-import { Bounce, ToastContainer } from "react-toastify";
+import Link from "next/link";
 import LoginForm from "./LoginForm";
+import OrderHistoryBtn from "./OrderHistoryBtn";
 
 const NavBar = () => {
   return (
     <div className="navbar bg-base-100 p-8">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">Hasui Kawase's Prints</a>
+        <Link href="/" className="btn btn-ghost text-xl">Hasui Kawase's Prints</Link>
       </div>
       <div className="flex-none">
-        <ul className="menu menu-horizontal px-1">
+        <ul className="menu menu-horizontal px-1 gap-4">
           <li className="flex justify-center">
-            <a>Products</a>
+            <OrderHistoryBtn />
           </li>
           <li>
             <details className="dropdown dropdown-end">
