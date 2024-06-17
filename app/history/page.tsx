@@ -1,7 +1,11 @@
-"use client"
+"use client";
 
+import Link from "next/link";
 import { ordersHistoryApi } from "../api";
 import formatDate from "../utils/formatDate";
+import PictureViewer from "../components/PictureViewer";
+import { useEffect, useState } from "react";
+import { Loader } from "react-feather";
 
 async function getData() {
   const res = await fetch(ordersHistoryApi);
@@ -13,25 +17,42 @@ async function getData() {
   return res.json();
 }
 
-export default async function History() {
-  const ordersHistory: OrderHistory[] = await getData();
+export default function History() {
+  // const ordersHistory: OrderHistory[] = await getData();
+  const [ordersHistory, setOrdersHistory] = useState<OrderHistory[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false);
+  const [isErrorHistory, setIsErrorHistory] = useState<boolean>(false);
 
-  const openModal = (id: string) => {
-    console.log('id :', id)
-    const modal = document.getElementById(
-      `modal_${id}`
-    ) as HTMLDialogElement;
+  useEffect(() => {
+    setIsLoadingHistory(true);
+    setIsErrorHistory(false);
+    fetch(ordersHistoryApi, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          setIsErrorHistory(true);
+          return;
+        }
+        console.log(response)
+        const data: OrderHistory[] = await response.json();
 
-    console.log('modal L', modal)
-    if (modal) {
-      modal.showModal();
-    }
-  };
+        setOrdersHistory(data);
+      })
+      .catch((e) => {
+        setIsErrorHistory(true);
+      })
+      .finally(() => {
+        setIsLoadingHistory(false);
+      });
+  }, []);
 
   return (
     <div className="grid grid-cols-5">
-      <div className="col-span-1">hey</div>
-      <div className="overflow-x-auto col-span-4">
+      <div className="overflow-x-auto col-span-5 px-9">
         <table className="table">
           {/* head */}
           <thead>
@@ -42,61 +63,87 @@ export default async function History() {
               <th>Price</th>
             </tr>
           </thead>
-          <tbody>
-            {ordersHistory.map((order) => {
-              return (
-                <>
-                  <tr key={order.id}>
-                    <td >
-                      <div className="flex items-center gap-3">
-                        <div className="avatar" onClick={() => openModal(order.id.toString())}>
-                          <div className="mask mask-squircle w-12 h-12">
-                            <img
-                              src={order.product.picture_url}
-                              alt={order.product.name}
-                              className="cursor-pointer"
-                            />
+          {isErrorHistory && (
+            <tbody>
+              <tr>
+                <td colSpan={4}>
+                  <div className="min-h-96 flex justify-center items-center">
+                    <div>
+                      <p className="text-red-500 text-right text-wrap">
+                        Something went wrong, <br /> Please try again
+                      </p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          )}
+          {isLoadingHistory && (
+            <tbody>
+              <tr>
+                <td colSpan={4}>
+                  <div className="min-h-96 flex justify-center items-center">
+                    <div>
+                      <Loader className="animate-spin" />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          )}
+          {ordersHistory.length < 1 && (!isLoadingHistory || !isErrorHistory) ? (
+            <tbody>
+              <tr>
+                <td colSpan={4}>
+                  <div className="min-h-96 flex justify-center items-center">
+                    <div>
+                      <p className="mb-3">You haven't made any orders yet</p>
+                      <div className="flex justify-center">
+                        <Link href="/" className="btn btn-primary btn-sm">
+                          Make Order
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          ) : (
+            <tbody>
+              {ordersHistory.map((order) => {
+                return (
+                  <>
+                    <tr key={order.id}>
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <PictureViewer
+                            id={order.id.toString()}
+                            pictureUrl={order.product.picture_url}
+                            name={order.product.name}
+                          />
+                          <div>
+                            <div className="font-bold">
+                              {order.product.name}
+                            </div>
                           </div>
                         </div>
-                        <div>
-                          <div className="font-bold">{order.product.name}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{formatDate(order.created_at)}</td>
-                    <td>{order.payment_method}</td>
-                    <td className="font-weight-bold italic">
-                      {Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      })
-                        .format(Number(order.total))
-                        .replace(/,00$/, "")}
-                    </td>
-                  </tr>
-                  <dialog id={`modal_${order.id}`} className="modal">
-                    <div className="modal-box">
-                      <form method="dialog">
-                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                          ✕
-                        </button>
-                      </form>
-                      <figure>
-                        <img
-                          src={order.product.picture_url}
-                          alt={order.product.name}
-                          className="object-cover"
-                        />
-                      </figure>
-                      <form method="dialog" className="modal-backdrop">
-                        <button>close</button>
-                      </form>
-                    </div>
-                  </dialog>
-                </>
-              );
-            })}
-          </tbody>
+                      </td>
+                      <td>{formatDate(order.created_at)}</td>
+                      <td>{order.payment_method}</td>
+                      <td className="font-weight-bold italic">
+                        {Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                        })
+                          .format(Number(order.total))
+                          .replace(/,00$/, "")}
+                      </td>
+                    </tr>
+                  </>
+                );
+              })}
+            </tbody>
+          )}
         </table>
       </div>
     </div>
