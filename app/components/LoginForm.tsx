@@ -112,6 +112,7 @@ const LoginForm = () => {
       full_name: loginForm.fullName,
       password: loginForm.password,
     };
+    console.log('registerapi :', registerApi)
     fetch(registerApi, {
       method: "POST",
       headers: {

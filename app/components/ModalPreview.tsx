@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { paymentMethods } from "../constants";
 import { orderApi } from "../api";
 import { Loader } from "react-feather";
