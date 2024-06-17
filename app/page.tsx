@@ -2,7 +2,7 @@ import { getItemsApi } from "./api";
 import ItemCard from "./components/ItemCard";
 
 async function getData() {
-  const res = await fetch(getItemsApi);
+  const res = await fetch(getItemsApi)
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");
