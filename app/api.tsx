@@ -1,4 +1,4 @@
-const BASE_URL = 'http://127.0.0.1:8000'
+const BASE_URL = process.env.BASE_URL
 
 export const getItemsApi = `${BASE_URL}/api/products/?format=json`
 export const loginApi = `${BASE_URL}/api/login`
