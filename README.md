@@ -1,6 +1,6 @@
-# nextjs-ecommerce
+# Nextjs E-Commerce
 
-# Next.js Application
+Deployed at : [Link](https://nextjs-ecommerce-lhnd.vercel.app/)
 
 This project was bootstrapped with [Next.js](https://nextjs.org/).
 
