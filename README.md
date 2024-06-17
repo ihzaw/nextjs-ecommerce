@@ -14,10 +14,13 @@ Before running the application, ensure you have the following installed:
 Follow these steps to get the development environment running:
 
 1. **Clone the repository:**
-   git clone <repository-url>
-   cd nextjs-ecommerce
+
+```
+git clone <repository-url>
+cd nextjs-ecommerce
+```
    
-2. **Install dependencies:**
+3. **Install dependencies:**
 
 ```
 npm install
